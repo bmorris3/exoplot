@@ -129,19 +129,19 @@ if mpld3plot:
     import mpld3
 
     fig, ax = plt.subplots(subplot_kw=dict(axisbg='#EEEEEE'))
-    x, y = db[bothmeasured].MASS, db[bothmeasured].R
+    x, y = np.log10(db[bothmeasured].MASS), db[bothmeasured].R
     N = len(x)
     scatter = ax.scatter(x, y,
-                         c=np.random.random(size=N),
-                         s=1000 * np.random.random(size=N),
+                         c=100*(1+db[bothmeasured].FE)**8,
+                         #s=,
                          alpha=0.3,
                          cmap=plt.cm.jet)
     ax.grid(color='white', linestyle='solid')
     
     ax.set_title("exoplanets.org ({0})".format(
                lastupdate(csvDatabaseName).strftime('%Y-%m-%d')), size=20)
-    ax.set_xlabel('Mass [$M_J$]')
-    ax.set_ylabel('Radius [$R_J$]')
+    ax.set_xlabel('log(Mass) [M_J]')
+    ax.set_ylabel('Radius [R_J]')
     labels = list(db[bothmeasured].NAME)
     tooltip = mpld3.plugins.PointLabelTooltip(scatter, labels=labels)
     mpld3.plugins.connect(fig, tooltip)
