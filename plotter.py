@@ -7,7 +7,7 @@ Wright et al. 2011: http://arxiv.org/pdf/1012.5676v3.pdf
 
 Brett Morris
 '''
-
+import numpy as np
 import os
 from urllib import urlopen
 from matplotlib import pyplot as plt
@@ -15,7 +15,8 @@ import pandas
 from datetime import datetime
 
 mplplot = False
-bokehplot = True
+bokehplot = False
+mpld3plot = True
 
 # Save the exoplanet.org database to the directory that this file is saved in
 exodbPath = os.path.dirname(os.path.abspath(__file__))
@@ -123,3 +124,26 @@ if bokehplot:
         #("fill color", "$color[hex, swatch]:fill_color"),
     ]
     show(p)
+    
+if mpld3plot:
+    import mpld3
+
+    fig, ax = plt.subplots(subplot_kw=dict(axisbg='#EEEEEE'))
+    x, y = db[bothmeasured].MASS, db[bothmeasured].R
+    N = len(x)
+    scatter = ax.scatter(x, y,
+                         c=np.random.random(size=N),
+                         s=1000 * np.random.random(size=N),
+                         alpha=0.3,
+                         cmap=plt.cm.jet)
+    ax.grid(color='white', linestyle='solid')
+    
+    ax.set_title("exoplanets.org ({0})".format(
+               lastupdate(csvDatabaseName).strftime('%Y-%m-%d')), size=20)
+    ax.set_xlabel('Mass [$M_J$]')
+    ax.set_ylabel('Radius [$R_J$]')
+    labels = list(db[bothmeasured].NAME)
+    tooltip = mpld3.plugins.PointLabelTooltip(scatter, labels=labels)
+    mpld3.plugins.connect(fig, tooltip)
+    
+    mpld3.show()
