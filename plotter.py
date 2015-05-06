@@ -126,24 +126,68 @@ if bokehplot:
     show(p)
     
 if mpld3plot:
+    
+    # Define some CSS to control our custom labels
+    css = """
+    table
+    {
+      border-collapse: collapse;
+    }
+    th
+    {
+      color: #ffffff;
+      background-color: #000000;
+    }
+    td
+    {
+      background-color: #cccccc;
+    }
+    table, th, td
+    {
+      font-family:Arial, Helvetica, sans-serif;
+      border: 1px solid black;
+      text-align: right;
+    }
+    """    
+    
+    
     import mpld3
+    from mpld3 import plugins
+    
+    #points = ax.plot(df.x, df.y, 'o', color='b',
+    #                 mec='k', ms=15, mew=1, alpha=.6)
+    
+    
 
     fig, ax = plt.subplots(subplot_kw=dict(axisbg='#EEEEEE'))
     x, y = np.log10(db[bothmeasured].MASS), db[bothmeasured].R
     N = len(x)
-    scatter = ax.scatter(x, y,
-                         c=100*(1+db[bothmeasured].FE)**8,
+    points = ax.plot(x, y, 'o')#,
+                         #c=100*(1+db[bothmeasured].FE)**8,
                          #s=,
-                         alpha=0.3,
-                         cmap=plt.cm.jet)
+                         #alpha=0.3)#,
+                         #cmap=plt.cm.jet)
+
+
+    labels = []
+    for i in range(N):
+        label = db.ix[[i], :].T
+        label.columns = ['Row {0}'.format(i)]
+        # .to_html() is unicode; so make leading 'u' go away with str()
+        labels.append(str(label.to_html()))
+
+    tooltip = plugins.PointHTMLTooltip(points[0], labels,
+                                       voffset=10, hoffset=10, css=css)
+    plugins.connect(fig, tooltip)
+
     ax.grid(color='white', linestyle='solid')
     
     ax.set_title("exoplanets.org ({0})".format(
                lastupdate(csvDatabaseName).strftime('%Y-%m-%d')), size=20)
     ax.set_xlabel('log(Mass) [M_J]')
     ax.set_ylabel('Radius [R_J]')
-    labels = list(db[bothmeasured].NAME)
-    tooltip = mpld3.plugins.PointLabelTooltip(scatter, labels=labels)
-    mpld3.plugins.connect(fig, tooltip)
+    #labels = list(db[bothmeasured].NAME)
+    #tooltip = mpld3.plugins.PointLabelTooltip(scatter, labels=labels)
+    #mpld3.plugins.connect(fig, tooltip)
     
     mpld3.show()
