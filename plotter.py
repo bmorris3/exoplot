@@ -171,7 +171,7 @@ if mpld3plot:
 
     labels = []
     for i in range(N):
-        label = db.ix[[i], :].T
+        label = db[bothmeasured].ix[[i], ['PER','FE','TEFF','MASS','R']].T
         label.columns = ['Row {0}'.format(i)]
         # .to_html() is unicode; so make leading 'u' go away with str()
         labels.append(str(label.to_html()))
