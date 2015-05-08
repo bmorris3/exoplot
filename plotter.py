@@ -136,16 +136,16 @@ if mpld3plot:
     th
     {
       color: #ffffff;
-      background-color: #000000;
+      background-color: #004AB8;
     }
     td
     {
-      background-color: #cccccc;
+      background-color: white;
     }
     table, th, td
     {
       font-family:Arial, Helvetica, sans-serif;
-      border: 1px solid black;
+      border: 1px solid #cccccc;
       text-align: right;
     }
     """    
@@ -170,9 +170,10 @@ if mpld3plot:
 
 
     labels = []
-    for i in range(N):
-        label = db[bothmeasured].ix[[i], ['PER','FE','TEFF','MASS','R']].T
-        label.columns = ['Row {0}'.format(i)]
+    inds = np.arange(len(bothmeasured))[np.array(bothmeasured)]
+    for i in inds:
+        label = db.ix[[i], ['PER','FE','TEFF','MASS','R']].T
+        label.columns = [db.NAME[i]] #['Row {0}'.format(i)]
         # .to_html() is unicode; so make leading 'u' go away with str()
         labels.append(str(label.to_html()))
 
